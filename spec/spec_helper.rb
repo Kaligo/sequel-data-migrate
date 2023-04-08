@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "sequel/data/migrate"
+require "sequel_data/migrate"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

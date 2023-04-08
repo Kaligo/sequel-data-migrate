@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe Sequel::Data::Migrate do
+RSpec.describe SequelData::Migrate do
   it "has a version number" do
-    expect(Sequel::Data::Migrate::VERSION).not_to be nil
+    expect(SequelData::Migrate::VERSION).not_to be nil
   end
 
   it "does something useful" do
