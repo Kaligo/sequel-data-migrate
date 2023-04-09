@@ -22,6 +22,14 @@ module SequelData
         already_migrated = dataset.select_map(column).to_set
         migration_files = fetch_migration_files.reject { |file| already_migrated.include?(File.basename(file)) }.sort
         migrations = fetch_migrations(migration_files)
+
+        migrations.zip(migration_files).each do |migration, file|
+          timer = Sequel.start_timer
+          db.log_info("Begin applying migration file #{file}")
+          migration.apply(db)
+          set_migration_version(db, file)
+          db.log_info("Finished applying migration version #{file}")
+        end
       end
 
       private
@@ -82,6 +90,10 @@ module SequelData
       # ordered according to the migration direction.
       def fetch_migrations(migration_files)
         migration_files.map { |file| load_migration_file(file) }
+      end
+
+      def set_migration_version(db, file)
+        db.from(table).insert(column => File.basename(file))
       end
     end
   end

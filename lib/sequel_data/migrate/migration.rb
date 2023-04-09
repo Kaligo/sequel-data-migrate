@@ -10,6 +10,22 @@ module SequelData
       def self.inherited(base)
         descendants << base
       end
+
+      def self.apply(db)
+        new(db).up
+      end
+
+      def initialize(db)
+        @db = db
+      end
+
+      def up
+        raise MigrationError, "No up method defined for migration #{self.class}"
+      end
+
+      private
+
+      attr_reader :db
     end
   end
 end
