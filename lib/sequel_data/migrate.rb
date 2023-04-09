@@ -1,15 +1,21 @@
 # frozen_string_literal: true
 
 require 'dry-configurable'
-require_relative "migrate/version"
+require 'sequel_data/migrate/version'
+require 'sequel_data/migrate/errors'
+require 'sequel_data/migrate/migrator'
 
 module SequelData
   module Migrate
     extend Dry::Configurable
 
-    setting :db_configuration
+    setting :db_configuration do
+      setting :host
+    end
     setting :migration_path, default: "db/data"
 
-    class Error < StandardError; end
+    def self.forward
+      Migrator.new(config).forward
+    end
   end
 end
