@@ -11,12 +11,8 @@ module SequelData
         @config = config
       end
 
-      def forward
-        if config.db_configuration.host.nil?
-          raise ConfigurationError, "db_configuration is not set"
-        end
-
-        db = Sequel.connect(config.db_configuration.host)
+      def migrate
+        db = connect_database
         dataset = ensure_table_exists(db)
 
         already_migrated = dataset.select_map(column).to_set
@@ -26,9 +22,26 @@ module SequelData
         migrations.zip(migration_files).each do |migration, file|
           timer = Sequel.start_timer
           db.log_info("Begin applying migration file #{file}")
-          migration.apply(db)
+          migration.apply(db, :up)
           set_migration_version(db, file)
           db.log_info("Finished applying migration version #{file}")
+        end
+      end
+
+      def rollback
+        db = connect_database
+        dataset = ensure_table_exists(db)
+
+        already_migrated = dataset.select_map(column).to_set
+        migration_files = fetch_migration_files.select { |file| already_migrated.include?(File.basename(file)) }.sort.reverse!
+        migrations = fetch_migrations(migration_files)
+
+        migrations.zip(migration_files).each do |migration, file|
+          timer = Sequel.start_timer
+          db.log_info("Begin rolling back migration file #{file}")
+          migration.apply(db, :down)
+          remove_migration_version(db, file)
+          db.log_info("Finished rolling back migration version #{file}")
         end
       end
 
@@ -42,6 +55,14 @@ module SequelData
 
       def table
         :data_migrations
+      end
+
+      def connect_database
+        if config.db_configuration.host.nil?
+          raise ConfigurationError, "db_configuration is not set"
+        end
+
+        Sequel.connect(config.db_configuration.host)
       end
 
       def ensure_table_exists(db)
@@ -94,6 +115,10 @@ module SequelData
 
       def set_migration_version(db, file)
         db.from(table).insert(column => File.basename(file))
+      end
+
+      def remove_migration_version(db, file)
+        db.from(table).where(column => File.basename(file)).delete
       end
     end
   end

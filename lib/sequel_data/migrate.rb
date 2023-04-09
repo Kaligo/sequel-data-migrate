@@ -14,8 +14,12 @@ module SequelData
     end
     setting :migration_path, default: "db/data"
 
-    def self.forward
-      Migrator.new(config).forward
+    def self.migrate
+      Migrator.new(config).migrate
+    end
+
+    def self.rollback
+      Migrator.new(config).rollback
     end
   end
 end
