@@ -6,7 +6,8 @@ require "sequel_data/migrate/migration"
 module SequelData
   module Migrate
     class Migrator
-      FILE_NAME_PATTERN = "[0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]_*.rb" # YYYYMMDD_*.rb
+      DATE_TIME_PATTERN = "[0-9]" * 14 # YYYYMMDDHHMMSS
+      FILE_NAME_PATTERN = "#{DATE_TIME_PATTERN}_*.rb"
       MUTEX = Mutex.new
 
       def initialize(config)
@@ -29,7 +30,7 @@ module SequelData
         end
       end
 
-      def rollback
+      def rollback(step = 1)
         db = connect_database
         dataset = ensure_table_exists(db)
 
@@ -40,6 +41,9 @@ module SequelData
         migrations = fetch_migrations(migration_files)
 
         migrations.zip(migration_files).each do |migration, file|
+          step -= 1
+          break if step.negative?
+
           db.log_info("Begin rolling back migration file #{file}")
           migration.new.down
           remove_migration_version(db, file)

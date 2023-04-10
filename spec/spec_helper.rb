@@ -4,6 +4,9 @@ ENV["RBS_TEST_TARGET"] ||= "SequelData::*"
 require "rbs/test/setup"
 require "sequel_data/migrate"
 
+HOST = "sqlite://spec/db/test.sqlite3"
+DB = Sequel.connect(HOST)
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"

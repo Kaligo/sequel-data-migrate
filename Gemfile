@@ -7,8 +7,11 @@ gemspec
 
 gem "rake", "~> 13.0"
 gem "rbs"
+gem "sqlite3"
 
 gem "rspec"
 
 gem "rubocop"
 gem "rubocop-rspec"
+
+gem "byebug"

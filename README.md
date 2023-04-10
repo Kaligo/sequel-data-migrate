@@ -38,6 +38,9 @@ task 'data:migrate' => :environment
 task 'data:rollback' => :environment
 ```
 
+Now you can migrate using `rake db:migrate` and rollback using `rake
+db:rollback`
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies.
