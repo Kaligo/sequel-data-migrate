@@ -1,6 +1,58 @@
+# TypeProf 0.21.2
+
+# Classes
 module SequelData
   module Migrate
     VERSION: String
-    # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+
+    def self.migrate: -> untyped
+    def self.rollback: -> untyped
+
+    class Error < StandardError
+    end
+
+    class ConfigurationError < Error
+    end
+
+    class MigrationError < Error
+    end
+
+    interface _Migration
+      def up: -> untyped
+      def down: -> untyped
+    end
+
+    class Migration
+      VALID_DIRECTION: [:up, :down]
+      self.@descendants: Array[untyped]
+
+      def self.descendants: -> Array[untyped]
+      def self.inherited: (untyped base) -> untyped
+
+      def up: -> untyped
+      def down: -> untyped
+    end
+
+    class Migrator
+      DATE_TIME_PATTERN: String
+      FILE_NAME_PATTERN: String
+      MUTEX: Thread::Mutex
+
+      def initialize: (untyped config) -> void
+      def migrate: -> untyped
+      def rollback: (?Integer step) -> untyped
+
+      private
+      attr_reader config: untyped
+      def column: -> :version
+      def table: -> :data_migrations
+      def connect_database: -> untyped
+      def ensure_table_exists: (untyped db) -> untyped
+      def fetch_migration_files: -> Array[String]
+      def load_migration_file: (String file) -> untyped
+      def fetch_migrations: (Array[String] migration_files) -> Array[untyped]
+      def set_migration_version: (untyped db, String? file) -> untyped
+      def remove_migration_version: (untyped db, String? file) -> untyped
+    end
   end
 end
