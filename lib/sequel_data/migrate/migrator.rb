@@ -1,5 +1,7 @@
-require 'sequel'
-require 'sequel_data/migrate/migration'
+# frozen_string_literal: true
+
+require "sequel"
+require "sequel_data/migrate/migration"
 
 module SequelData
   module Migrate
@@ -20,7 +22,6 @@ module SequelData
         migrations = fetch_migrations(migration_files)
 
         migrations.zip(migration_files).each do |migration, file|
-          timer = Sequel.start_timer
           db.log_info("Begin applying migration file #{file}")
           migration.apply(db, :up)
           set_migration_version(db, file)
@@ -33,11 +34,12 @@ module SequelData
         dataset = ensure_table_exists(db)
 
         already_migrated = dataset.select_map(column).to_set
-        migration_files = fetch_migration_files.select { |file| already_migrated.include?(File.basename(file)) }.sort.reverse!
+        migration_files = fetch_migration_files.select do |file|
+          already_migrated.include?(File.basename(file))
+        end.sort.reverse!
         migrations = fetch_migrations(migration_files)
 
         migrations.zip(migration_files).each do |migration, file|
-          timer = Sequel.start_timer
           db.log_info("Begin rolling back migration file #{file}")
           migration.apply(db, :down)
           remove_migration_version(db, file)
@@ -58,9 +60,7 @@ module SequelData
       end
 
       def connect_database
-        if config.db_configuration.host.nil?
-          raise ConfigurationError, "db_configuration is not set"
-        end
+        raise ConfigurationError, "db_configuration is not set" if config.db_configuration.host.nil?
 
         Sequel.connect(config.db_configuration.host)
       end

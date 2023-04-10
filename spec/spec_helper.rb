@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+ENV['RBS_TEST_TARGET'] ||= 'SequelData::*'
+require 'rbs/test/setup'
 require "sequel_data/migrate"
 
 RSpec.configure do |config|

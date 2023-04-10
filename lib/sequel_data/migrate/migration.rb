@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SequelData
   module Migrate
     class Migration
@@ -11,12 +13,11 @@ module SequelData
       # Adds the new migration class to the list of Migration descendants.
       def self.inherited(base)
         descendants << base
+        super
       end
 
       def self.apply(db, direction)
-        unless VALID_DIRECTION.include?(direction)
-          raise MigrationError, "Invalid direction #{direction.inspect}"
-        end
+        raise MigrationError, "Invalid direction #{direction.inspect}" unless VALID_DIRECTION.include?(direction)
 
         new(db).public_send(direction)
       end

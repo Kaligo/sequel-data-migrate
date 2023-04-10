@@ -1,8 +1,13 @@
 # Sequel::Data::Migrate
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/sequel_data/migrate`. To experiment with that code, run `bin/console` for an interactive prompt.
+Run data migrations along side schema migrations for Sequel. Inspired by
+https://github.com/ilyakatz/data-migrate.
 
-TODO: Delete this and the text above, and describe your gem
+Data migrations are stored in db/data. They act like schema migrations,
+except they should be reserved for data migrations.
+For instance, if you realize you need to titleize all your titles, this is the place to do it.
+
+The code is ported from Sequel migration extension.
 
 ## Installation
 
@@ -16,17 +21,37 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-TODO: Write usage instructions here
+Configure your database:
+
+```ruby
+SequelData::Migrate.configure do |config|
+  config.db_configuration.host = ENV.fetch('DATABASE_URL')
+  config.migration_path = 'db/data_migration' # default value is db/data
+end
+```
+
+Add the rake task to `Rakelib` file in your project:
+
+```ruby
+require 'sequel_data/migrate/rake_task'
+task 'data:migrate' => :environment
+task 'data:rollback' => :environment
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies.
+Then, run `rake spec` to run the tests.
+You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`.
+To release a new version, update the version number in `version.rb`,
+and then run `bundle exec rake release`, which will create a git tag for the version,
+push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/sequel-data-migrate.
+Bug reports and pull requests are welcome on GitHub at https://github.com/kaligo/sequel-data-migrate.
 
 ## License
 
