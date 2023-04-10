@@ -1,4 +1,4 @@
-# Sequel::Data::Migrate
+# SequelData::Migrate
 
 Run data migrations along side schema migrations for Sequel. Inspired by
 https://github.com/ilyakatz/data-migrate.

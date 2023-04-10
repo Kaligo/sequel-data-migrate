@@ -23,7 +23,7 @@ module SequelData
 
         migrations.zip(migration_files).each do |migration, file|
           db.log_info("Begin applying migration file #{file}")
-          migration.apply(db, :up)
+          migration.new.up
           set_migration_version(db, file)
           db.log_info("Finished applying migration version #{file}")
         end
@@ -41,7 +41,7 @@ module SequelData
 
         migrations.zip(migration_files).each do |migration, file|
           db.log_info("Begin rolling back migration file #{file}")
-          migration.apply(db, :down)
+          migration.new.down
           remove_migration_version(db, file)
           db.log_info("Finished rolling back migration version #{file}")
         end

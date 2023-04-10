@@ -16,16 +16,6 @@ module SequelData
         super
       end
 
-      def self.apply(db, direction)
-        raise MigrationError, "Invalid direction #{direction.inspect}" unless VALID_DIRECTION.include?(direction)
-
-        new(db).public_send(direction)
-      end
-
-      def initialize(db)
-        @db = db
-      end
-
       def up
         raise MigrationError, "No up method defined for migration #{self.class}"
       end
@@ -33,10 +23,6 @@ module SequelData
       def down
         raise MigrationError, "No down method defined for migration #{self.class}"
       end
-
-      private
-
-      attr_reader :db
     end
   end
 end
