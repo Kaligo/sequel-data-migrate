@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
-ENV["RBS_TEST_TARGET"] ||= "SequelData::*"
-require "rbs/test/setup"
+# enable rbs type checking
+if RUBY_VERSION >= "3"
+  ENV["RBS_TEST_TARGET"] ||= "SequelData::*"
+  require "rbs/test/setup"
+end
+
 require "sequel_data/migrate"
 
 HOST = "sqlite://spec/db/test.sqlite3"
