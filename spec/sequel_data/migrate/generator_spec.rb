@@ -2,9 +2,9 @@
 
 RSpec.describe SequelData::Migrate::Generator do
   describe "#create_migration" do
-    let(:migration_path) { 'spec/output' }
+    let(:migration_path) { "spec/output" }
     let(:file_pattern) { "#{migration_path}/*.rb" }
-    let(:config) { double('Config', migration_path: migration_path) }
+    let(:config) { double("Config", migration_path: migration_path) }
 
     after do
       Dir[file_pattern].each { |file| File.delete(file) }

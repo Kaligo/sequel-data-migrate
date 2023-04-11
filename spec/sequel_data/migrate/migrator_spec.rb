@@ -2,7 +2,6 @@
 
 RSpec.describe SequelData::Migrate::Migrator do
   let(:db) { DB }
-  # rubocop:disable RSpec/VerifiedDoubles
   let(:config) do
     double(
       "Config",
@@ -10,7 +9,6 @@ RSpec.describe SequelData::Migrate::Migrator do
       migration_path: "spec/fixtures/migrations"
     )
   end
-  # rubocop:enable RSpec/VerifiedDoubles
   let(:migrator) { described_class.new(config) }
 
   # rubocop:disable RSpec/BeforeAfterAll
@@ -45,7 +43,6 @@ RSpec.describe SequelData::Migrate::Migrator do
     end
 
     context "when db configuration is not set" do
-      # rubocop:disable RSpec/VerifiedDoubles
       let(:config) do
         double(
           "Config",
@@ -53,7 +50,6 @@ RSpec.describe SequelData::Migrate::Migrator do
           migration_path: "spec/fixtures/migrations"
         )
       end
-      # rubocop:enable RSpec/VerifiedDoubles
 
       it "raises error" do
         expect do
@@ -131,7 +127,6 @@ RSpec.describe SequelData::Migrate::Migrator do
     end
 
     context "when db configuration is not set" do
-      # rubocop:disable RSpec/VerifiedDoubles
       let(:config) do
         double(
           "Config",
@@ -139,7 +134,6 @@ RSpec.describe SequelData::Migrate::Migrator do
           migration_path: "spec/fixtures/migrations"
         )
       end
-      # rubocop:enable RSpec/VerifiedDoubles
 
       it "raises error" do
         expect do
