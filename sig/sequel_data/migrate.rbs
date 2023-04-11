@@ -1,12 +1,16 @@
 # TypeProf 0.21.2
 
+# Global variables
+$trace: false
+
 # Classes
 module SequelData
   module Migrate
     VERSION: String
 
     def self.migrate: -> untyped
-    def self.rollback: -> untyped
+    def self.rollback: (Integer? step) -> untyped
+    def self.create_migration: (String name) -> untyped
 
     class Error < StandardError
     end
@@ -17,9 +21,14 @@ module SequelData
     class MigrationError < Error
     end
 
-    interface _Migration
-      def up: -> untyped
-      def down: -> untyped
+    class Generator
+      VERSION_FORMAT: String
+
+      def initialize: (untyped config) -> void
+      def create_migration: (String name) -> String
+
+      private
+      attr_reader config: untyped
     end
 
     class Migration
@@ -28,7 +37,6 @@ module SequelData
 
       def self.descendants: -> Array[untyped]
       def self.inherited: (untyped base) -> untyped
-
       def up: -> untyped
       def down: -> untyped
     end

@@ -4,6 +4,7 @@ require "dry-configurable"
 require "sequel_data/migrate/version"
 require "sequel_data/migrate/errors"
 require "sequel_data/migrate/migrator"
+require "sequel_data/migrate/generator"
 
 module SequelData
   module Migrate
@@ -18,8 +19,12 @@ module SequelData
       Migrator.new(config).migrate
     end
 
-    def self.rollback
-      Migrator.new(config).rollback
+    def self.rollback(step = 1)
+      Migrator.new(config).rollback(step)
+    end
+
+    def self.create_migration(name)
+      Generator.new(config).create_migration(name)
     end
   end
 end
