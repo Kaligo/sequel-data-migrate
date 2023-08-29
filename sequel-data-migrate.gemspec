@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "dry-configurable", ">= 0.13.0"
+  spec.add_dependency "dry-configurable", "< 0.13.0"
   spec.add_dependency "sequel", ">= 4.0.0"
   spec.metadata["rubygems_mfa_required"] = "true"
 end
