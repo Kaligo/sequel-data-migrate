@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "dry-configurable"
+require "dry/configurable/version"
 require "sequel_data/migrate/version"
 require "sequel_data/migrate/errors"
 require "sequel_data/migrate/migrator"
@@ -13,7 +14,12 @@ module SequelData
     setting :db_configuration do
       setting :host
     end
-    setting :migration_path, default: "db/data"
+
+    if Dry::Configurable::VERSION >= "0.13.0"
+      setting :migration_path, default: "db/data"
+    else
+      setting :migration_path, "db/data"
+    end
 
     def self.migrate
       Migrator.new(config).migrate
