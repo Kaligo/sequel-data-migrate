@@ -38,8 +38,8 @@ task 'data:migrate' => :environment
 task 'data:rollback' => :environment
 ```
 
-Now you can migrate using `rake db:migrate` and rollback using `rake
-db:rollback`.
+Now you can migrate using `rake data:migrate` and rollback using `rake
+data:rollback`.
 
 To create new migration file, you can use `data:create_migration` rake task:
 
