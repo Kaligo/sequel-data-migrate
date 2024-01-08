@@ -15,7 +15,7 @@ module SequelData
       end
 
       def migrate
-        connect_database do |db|
+        connect_to_db do |db|
           dataset = ensure_table_exists(db)
 
           already_migrated = dataset.select_map(column).to_set
@@ -32,7 +32,7 @@ module SequelData
       end
 
       def rollback(step = 1)
-        connect_database do |db|
+        connect_to_db do |db|
           dataset = ensure_table_exists(db)
 
           already_migrated = dataset.select_map(column).to_set
@@ -65,7 +65,7 @@ module SequelData
         :data_migrations
       end
 
-      def connect_database(&block)
+      def connect_to_db(&block)
         raise ConfigurationError, "db_configuration is not set" if config.db_configuration.host.nil?
 
         Sequel.connect(config.db_configuration.host, &block)
