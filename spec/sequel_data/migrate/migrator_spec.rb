@@ -119,6 +119,8 @@ RSpec.describe SequelData::Migrate::Migrator do
     end
 
     context "when migrations are applied" do
+      after { db.drop_table(:data_migrations) }
+
       it "does not leave extra connections open" do
         expect do
           migrator.migrate
