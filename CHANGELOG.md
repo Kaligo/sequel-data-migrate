@@ -1,3 +1,7 @@
+## [0.1.2] - 2024-01-08
+
+- Avoid leaking DB connections
+
 ## [0.1.1] - 2023-09-01
 
 - Update gemspec to avoid `git ls-files`
