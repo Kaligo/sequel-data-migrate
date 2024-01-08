@@ -118,7 +118,7 @@ RSpec.describe SequelData::Migrate::Migrator do
       end
     end
 
-    context "migrations are applied" do
+    context "when migrations are applied" do
       before do
         db.create_table(:data_migrations) do
           String :version, null: false, primary: true
@@ -130,9 +130,9 @@ RSpec.describe SequelData::Migrate::Migrator do
       it "does not leave extra connections open" do
         expect do
           migrator.migrate
-        end.to not_change {
+        end.to(not_change do
           Sequel::DATABASES.size
-        }
+        end)
       end
     end
   end
@@ -218,9 +218,9 @@ RSpec.describe SequelData::Migrate::Migrator do
       it "rollback database one step" do
         expect do
           migrator.rollback
-        end.to not_change {
+        end.to(not_change do
           Sequel::DATABASES.size
-        }
+        end)
       end
     end
   end
