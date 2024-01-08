@@ -54,7 +54,7 @@ module SequelData
       attr_reader config: untyped
       def column: -> :version
       def table: -> :data_migrations
-      def connect_database: -> untyped
+      def connect_database: () { (untyped db) -> void } -> untyped
       def ensure_table_exists: (untyped db) -> untyped
       def fetch_migration_files: -> Array[String]
       def load_migration_file: (String file) -> untyped

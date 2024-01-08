@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+RSpec::Matchers.define_negated_matcher :not_change, :change
+
 RSpec.describe SequelData::Migrate::Migrator do
   let(:db) { DB }
   let(:config) do
@@ -115,6 +117,18 @@ RSpec.describe SequelData::Migrate::Migrator do
         }.from(["20010101010205_second_migration.rb"]).to(versions)
       end
     end
+
+    context "when migrations are applied" do
+      after { db.drop_table(:data_migrations) }
+
+      it "does not leave extra connections open" do
+        expect do
+          migrator.migrate
+        end.to(not_change do
+          Sequel::DATABASES.size
+        end)
+      end
+    end
   end
 
   describe "#rollback" do
@@ -187,6 +201,20 @@ RSpec.describe SequelData::Migrate::Migrator do
         }.from(["foobar"]).to(["foo"]).and change {
           db[:data_migrations].order(:version).select_map(:version)
         }.from(["20010101010203_initial_migration.rb", "20010101010205_second_migration.rb"]).to([])
+      end
+    end
+
+    context "when rollbacks are applied" do
+      before { migrator.migrate }
+
+      after { db.drop_table(:data_migrations) }
+
+      it "does not leave extra connections open" do
+        expect do
+          migrator.rollback
+        end.to(not_change do
+          Sequel::DATABASES.size
+        end)
       end
     end
   end
