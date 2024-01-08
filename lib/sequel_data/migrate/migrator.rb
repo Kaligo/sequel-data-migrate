@@ -15,39 +15,41 @@ module SequelData
       end
 
       def migrate
-        db = connect_database
-        dataset = ensure_table_exists(db)
+        connect_database do |db|
+          dataset = ensure_table_exists(db)
 
-        already_migrated = dataset.select_map(column).to_set
-        migration_files = fetch_migration_files.reject { |file| already_migrated.include?(File.basename(file)) }.sort
-        migrations = fetch_migrations(migration_files)
+          already_migrated = dataset.select_map(column).to_set
+          migration_files = fetch_migration_files.reject { |file| already_migrated.include?(File.basename(file)) }.sort
+          migrations = fetch_migrations(migration_files)
 
-        migrations.zip(migration_files).each do |migration, file|
-          db.log_info("Begin applying migration file #{file}")
-          migration.new.up
-          set_migration_version(db, file)
-          db.log_info("Finished applying migration version #{file}")
+          migrations.zip(migration_files).each do |migration, file|
+            db.log_info("Begin applying migration file #{file}")
+            migration.new.up
+            set_migration_version(db, file)
+            db.log_info("Finished applying migration version #{file}")
+          end
         end
       end
 
       def rollback(step = 1)
-        db = connect_database
-        dataset = ensure_table_exists(db)
+        connect_database do |db|
+          dataset = ensure_table_exists(db)
 
-        already_migrated = dataset.select_map(column).to_set
-        migration_files = fetch_migration_files.select do |file|
-          already_migrated.include?(File.basename(file))
-        end.sort.reverse!
-        migrations = fetch_migrations(migration_files)
+          already_migrated = dataset.select_map(column).to_set
+          migration_files = fetch_migration_files.select do |file|
+            already_migrated.include?(File.basename(file))
+          end.sort.reverse!
+          migrations = fetch_migrations(migration_files)
 
-        migrations.zip(migration_files).each do |migration, file|
-          step -= 1
-          break if step.negative?
+          migrations.zip(migration_files).each do |migration, file|
+            step -= 1
+            break if step.negative?
 
-          db.log_info("Begin rolling back migration file #{file}")
-          migration.new.down
-          remove_migration_version(db, file)
-          db.log_info("Finished rolling back migration version #{file}")
+            db.log_info("Begin rolling back migration file #{file}")
+            migration.new.down
+            remove_migration_version(db, file)
+            db.log_info("Finished rolling back migration version #{file}")
+          end
         end
       end
 
@@ -63,10 +65,10 @@ module SequelData
         :data_migrations
       end
 
-      def connect_database
+      def connect_database(&block)
         raise ConfigurationError, "db_configuration is not set" if config.db_configuration.host.nil?
 
-        Sequel.connect(config.db_configuration.host)
+        Sequel.connect(config.db_configuration.host, &block)
       end
 
       def ensure_table_exists(db)
